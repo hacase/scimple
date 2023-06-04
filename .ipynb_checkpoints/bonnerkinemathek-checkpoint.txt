@@ -1,0 +1,41 @@
+from urllib.request import urlopen
+import re
+from bs4 import BeautifulSoup
+
+date = []
+title = []
+spec = []
+time = []
+location = []
+
+url = "https://www.bonnerkinemathek.de/programm/"
+page = urlopen(url)
+html = page.read().decode("utf-8")
+
+pattern = r'<h2>.*?</a></div>'
+match_results = re.findall(pattern, html, re.DOTALL)
+
+for i in match_results:    
+    soup = BeautifulSoup(i, "html.parser")
+    
+    for i in range(100):
+        try:
+            date.append(re.sub("<.*?>", "", str(soup.find("h2"))))
+            title.append(re.sub("<.*?>", "", soup.find_all("div", class_="title")[i].text))
+            spec.append(re.sub("<.*?>", "", soup.find_all("span", class_="spec")[i].text))
+            time.append(re.sub("<.*?>", "", soup.find_all("span", class_="date")[i].text))
+            location.append(re.sub("<.*?>", "", soup.find_all("div", class_="location")[i].text))
+        except:
+            break
+            
+print(date[i])
+for i in range(len(title)):
+    if (date[i] != date[i+1]) or (i+1 == len(date)):
+        print(date[i])
+
+    print(title[i])
+    print(spec[i], time[i])
+    print(location[i], "\n")
+
+
+print('done')
