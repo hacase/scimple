@@ -21,13 +21,13 @@ brot = bf.brotfabrik()
 rex = rx.rex()
 buehne = fb.filmbuehne()
 
-string = """Show
-Cinemas
-In
-My
-Place
-Listing
-Everything"""
+string = """     Show
+     Cinemas
+     In
+     My
+     Place
+     Listing
+     Everything"""
 
 typing_speed = 100 #wpm
 
@@ -55,5 +55,5 @@ for i in range(len(brot['title'])):
     print(brot['runtime'][i])
     print(brot['spec'][i])
     print(brot['location'][i])
-    print(brot['ticket'][i])
+    print(f"\033[38;5;26m{brot['ticket'][i]}\x1b[0m")
     print('\n')
