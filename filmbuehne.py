@@ -7,13 +7,9 @@ from datetime import datetime as dt
 exclude = ['category', 'code']
 
 def filmbuehne():
-    timestamp = []
-    title = []
-    room = []
-    runtime = []
-    spec = []
-    location = []
-    ticket = []
+    result = {
+        "alias": ['filmbuehne', 'fb', 'neue filmbuehne', 'filmbühne', 'neue filmbühne'],
+        "event": []}
 
     url = "https://www.kinoheld.de/ajax/getShowsForCinemas?cinemaIds%5B%5D=996&lang=de"
     page = urlopen(url)
@@ -23,11 +19,11 @@ def filmbuehne():
 
     for show in jstring['shows']:
         jtime = show['date'] +'-'+ show['time']
-        timestamp.append(dt.strptime(jtime, '%Y-%m-%d-%H:%M'))
-        title.append(show['name'])
-        room.append(None)
-        location.append('Filmbühne')
-        runtime.append(show['duration'])
+        timestamp = dt.strptime(jtime, '%Y-%m-%d-%H:%M')
+        title = show['name']
+        room = None
+        location = 'Neue Filmbühne'
+        runtime = show['duration']
 
         jspec = ''
         for flags in show['flags']:
@@ -36,20 +32,25 @@ def filmbuehne():
                     jspec += flags[flag] + '\n'
         if jspec[-1:] == '\n':
             jspec = jspec[:-1]
-        spec.append(jspec)
+        spec = jspec.replace('\n', ' ')
 
         before = 'https://www.kinoheld.de/kino/bonn/neue-filmbuehne-bonn/vorstellung/'
         after = '?mode=widget&layout=movies&rb=0&hideFilters=1#panel-seats'
-        ticket.append(before + show['id'] + after)
+        ticket = before + show['id'] + after
         
-    result = {
-        "timestamp": timestamp,
-        "title": title,
-        "room": room,
-        "runtime": runtime,
-        "spec": spec,
-        "location": location,
-        "ticket": ticket
-    }
+        page = {
+            "name": 'Neue Filmbühne',
+            "short name": 'filmbuehne',
+            "emoji": ':NEW_button:',
+            "timestamp": timestamp,
+            "title": title,
+            "room": room,
+            "runtime": runtime,
+            "spec": spec,
+            "location": location,
+            "ticket": ticket
+        }
+        
+        result['event'].append(page)
     
     return result

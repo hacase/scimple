@@ -24,13 +24,9 @@ exclude = ['termine', 'vorstellungen_fakten', 'idf', 'filmreihe_id', 'plakat_ids
            'titel', '2D']
 
 def woki():
-    timestamp = []
-    title = []
-    room = []
-    runtime = []
-    spec = []
-    location = []
-    ticket = []
+    result = {
+        "alias": ['woki', 'wk'],
+        "event": []}
 
     url = "https://www.woki.de/programm"
     page = urlopen(url)
@@ -89,25 +85,30 @@ def woki():
 
                 screen = termin[day]
                 for i in range(times):
-                    title.append(jtitle)
+                    title = jtitle
                     if jspec[-2:-1] == '\n':
                         jspec = jspec[:-1]
-                    spec.append(jspec[:-1])
-                    timestamp.append(dt.strptime(screen[i]['datum'] +'-'+ screen[i]['zeit'], '%Y-%m-%d-%H:%M'))
-                    room.append(screen[i]['saal'])
-                    runtime.append(jruntime)
-                    ticket.append(unquote(unquote(screen[i]['link_mobile'])))
-                    location.append('WOKI')
+                    spec = jspec[:-1].replace('\n', ' ')
+                    
+                    timestamp = dt.strptime(screen[i]['datum'] +'-'+ screen[i]['zeit'], '%Y-%m-%d-%H:%M')
+                    room = screen[i]['saal']
+                    runtime = jruntime
+                    ticket = unquote(unquote(screen[i]['link_mobile']))
+                    location = 'WOKI'
 
+                    page = {
+                        "name": 'WOKI',
+                        "short name": 'woki',
+                        "emoji": ':popcorn:',
+                        "timestamp": timestamp,
+                        "title": title,
+                        "room": room,
+                        "runtime": runtime,
+                        "spec": spec,
+                        "location": location,
+                        "ticket": ticket
+                    }
 
-    result = {
-        "timestamp": timestamp,
-        "title": title,
-        "room": room,
-        "runtime": runtime,
-        "spec": spec,
-        "location": location,
-        "ticket": ticket
-    }
+                    result['event'].append(page)
     
     return result
