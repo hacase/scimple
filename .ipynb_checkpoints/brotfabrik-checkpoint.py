@@ -34,7 +34,7 @@ def brotfabrik():
                 
                 page = {
                     "name": 'Brotfabrik',
-                    "short name": 'brot',
+                    "short name": 'brotfabrik',
                     "emoji": ':bread:',
                     "timestamp": timestamp,
                     "title": title,
