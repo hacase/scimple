@@ -46,6 +46,8 @@ l_dayname = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday',
              'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun',
              'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag',
              'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So']
+
+l_daybuzz = l_today + l_tomorrow + l_dayname
     
 def detect_date(date, return_bool=False):
     day = None
