@@ -6,24 +6,27 @@ import emoji
 from datetime import datetime as dt
 from datetime import timedelta
 
-string = """     Show
-     Cinemas
-     In
-     My
-     Place
-     Listing
-     Everything"""
-
-typing_speed = 100 #wpm
-
 def slow_type(t):
+    typing_speed = 375
     for l in t:
         sys.stdout.write(l)
         sys.stdout.flush()
-        time.sleep(random.random()*10.0/typing_speed)
-    print('')
+        time.sleep(10.0/typing_speed)
+    print('\n')
 
-slow_type(string)
+def opening():
+    string = """     S how
+     C inemas
+     I n
+     M y
+     P lace
+     L isting
+     E verything"""
+
+    print('')
+    slow_type(string)
+    
+opening()
 
 def inputexit(var):
     var = input(var)
@@ -48,6 +51,7 @@ l_dayname = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday',
              'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So']
 
 l_daybuzz = l_today + l_tomorrow + l_dayname
+    
     
 def return_color(string, color):
     this = '\033[38;5;'+ color +'m' + string +'\033[0;0m'
@@ -240,10 +244,27 @@ def check_import(package):
         return True  
     else:
         return False
+    
+def sorter(d, sorter_key=None):
+    try:
+        if sorter_key == 'a':
+            d = sorted(d, key=lambda l: l['title'])
+        elif sorter_key == 't':
+            d = sorted(d, key=lambda l: l['timestamp'])
+        elif sorter_key == 'r':
+            d = sorted(d, key=lambda l: l['room'])
+        else:
+            d = sorted(d, key=lambda l: l['timestamp'])
+            
+    except TypeError:
+        d = sorted(d, key=lambda l: l['timestamp'])
+    
+    return d
+    
 
-def show_date(timestamp, l_cinema):
+def show_date(timestamp, l_cinema, sorter_key):
     for cinema in l_cinema:
-        for event in cinema['event']:
+        for event in sorter(cinema['event'], sorter_key):
             if event['timestamp'].strftime('%d.%m') == timestamp.strftime('%d.%m'):
                 show_event(event)
                 
@@ -295,16 +316,16 @@ def cinema_in_dlist(cinema, dlist):
         for d in dlist:
             if cinema in d['alias']:
                 result = True
-                return result       
+                return result      
                 
 
 print('\n')
 
+print(emoji.emojize(":T-Rex:"), 'Rex', emoji.emojize(":T-Rex:"))
+
 print(emoji.emojize(":popcorn:"), 'WOKI', emoji.emojize(":popcorn:"))
 
 print(emoji.emojize(":bread:"), 'Brotfabrik', emoji.emojize(":bread:"))
-
-print(emoji.emojize(":T-Rex:"), 'Rex', emoji.emojize(":T-Rex:"))
 
 print(emoji.emojize(":NEW_button:"), 'Neue Filmbühne', emoji.emojize(":NEW_button:"))
 
@@ -314,14 +335,21 @@ l_cinema = []
 
 while True:
     var_cinema = None
+    sorter_key = None
     var = dt.today()
     selected_cinema = []
     
     prompt = inputexit('prompt: ').lower()
+    if '--' in prompt:
+        prompt, sorter_key = prompt.split('--')
+    
+    if prompt[-1] == ' ':
+        prompt = prompt[:-1]
+        
     print('')
     
-    if ' ' in prompt:
-        var, var_cinema = prompt.split(' ', 1)
+    if '..' in prompt:
+        var, var_cinema = prompt.split('..', 1)
         var_cinema = multicinema(var_cinema)
     
     elif is_cinema_alias(prompt):
@@ -361,10 +389,10 @@ while True:
     
 
     if str(var).lower() in [l.lower() for l in l_today]:
-        show_date(dt.today(), selected_cinema)
+        show_date(dt.today(), selected_cinema, sorter_key)
 
     elif str(var).lower() in [l.lower() for l in l_tomorrow]:
-        show_date(dt.today() + timedelta(days=1), selected_cinema)
+        show_date(dt.today() + timedelta(days=1), selected_cinema, sorter_key)
 
     elif str(var).lower() in [l.lower() for l in l_dayname]:
         day_hit = l_dayname.index(var.capitalize())%7
@@ -377,19 +405,19 @@ while True:
         else:
             day_skip = day_hit - dt.today().weekday()
 
-        show_date(dt.today() + timedelta(days = day_skip), selected_cinema)
+        show_date(dt.today() + timedelta(days = day_skip), selected_cinema, sorter_key)
 
     elif type(date) == dt:
-        show_date(date, selected_cinema)
+        show_date(date, selected_cinema, sorter_key)
         
     elif var_cinema != None:
         for i in range(14):
-            show_date(dt.today() + timedelta(days = i), selected_cinema)
+            show_date(dt.today() + timedelta(days = i), selected_cinema, sorter_key)
 
     else:
         for cinema in selected_cinema:
             for event in cinema['event']:
                 if var == event['title']:
-                    show_date(date, selected_cinema)
+                    show_date(date, selected_cinema, sorter_key)
         
     print('\n\n')
