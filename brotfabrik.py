@@ -9,7 +9,7 @@ def brotfabrik():
         "event": []}
 
     url = "https://www.bonnerkinemathek.de/programm/"
-    page = urlopen(url)
+    page = urlopen(url, )
     html = page.read().decode("utf-8")
 
     pattern = r'<h2>.*?</a></div>'

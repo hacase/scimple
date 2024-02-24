@@ -49,54 +49,70 @@ l_dayname = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday',
 
 l_daybuzz = l_today + l_tomorrow + l_dayname
     
+def return_color(string, color):
+    this = '\033[38;5;'+ color +'m' + string +'\033[0;0m'
+    return this
+    
 def detect_date(date, return_bool=False):
-    day = None
-    month = None
-    year = None
-    
-    if date[-1] == '.':
-        date = date[:-1]
-    
-    if date.count('.') == 1:
-        first, second = date.split('.')
-        
-        if int(second) > 12:
-            if int(second) > 1900:
-                year = '20' + second
-            else:
-                year = second
-            month = first
-            
+    if type(date) == dt:
+        if return_bool:
+            return True
         else:
+            return date
+    
+    try:
+        day = None
+        month = None
+        year = None
+
+        if date[-1] == '.':
+            date = date[:-1]
+
+        if date.count('.') == 1:
+            first, second = date.split('.')
+
+            if int(second) > 12:
+                if int(second) > 1900:
+                    year = '20' + second
+                else:
+                    year = second
+                month = first
+
+            else:
+                day = first
+                month = second
+
+        elif date.count('.') == 2:
+            first, second, third = date.split('.')
             day = first
             month = second
-            
-    elif date.count('.') == 2:
-        first, second, third = date.split('.')
-        day = first
-        month = second
-        if int(third) > 1900:
-            year = third
+            if int(third) > 1900:
+                year = third
+            else:
+                year = '20' + third
+
         else:
-            year = '20' + third
-    
-    else:
-        day = date
-        
-    date = ''
-    key = ''
+            day = date
+            month = str(dt.now().month)
+            year = str(dt.now().year)
 
-    if day:
-        date += day +'.'
-        key += '%d.'
+        date = ''
+        key = ''
 
-    if month:
-        date += month +'.'
-        key += '%m.'
+        if day:
+            date += day +'.'
+            key += '%d.'
 
-    if year:
-        date += year
-        key += '%Y'
+        if month:
+            date += month +'.'
+            key += '%m.'
+
+        if year:
+            date += year
+            key += '%Y'
+            
+    except TypeError:
+        return False
 
     try:
         if return_bool:
@@ -154,7 +170,13 @@ def breakline_space(text, width):
         
 def show_event(event_d):
     window_width = 48
-    print(emoji.emojize(event_d['emoji']), event_d['title'])
+    
+    if event_d['timestamp'] > dt.now():
+        event_colored = event_d['title']
+    else:
+        event_colored = return_color(event_d['title'], '160')
+        
+    print(emoji.emojize(event_d['emoji']), event_colored)
     print('-'*window_width)
     
     if event_d['runtime']:
@@ -177,7 +199,8 @@ def show_event(event_d):
     else:
         print(comment)
             
-    print(event_d['ticket'], '\n')
+    print(return_color(event_d['ticket'], '39'))
+    print('')
     
 def import_all():
     import woki as wk
@@ -190,7 +213,7 @@ def import_all():
     rex = rx.rex()
     buehne = fb.filmbuehne()
     
-    return (woki, brot, rex, buehne)
+    return [woki, brot, rex, buehne]
 
 def import_cinema(name):
     if name in woki_alias:
@@ -198,7 +221,7 @@ def import_cinema(name):
         return wk.woki()
     
     elif name in brot_alias:
-        import brotfabrik as brot
+        import brotfabrik as bf
         return bf.brotfabrik()
     
     elif name in rex_alias:
@@ -213,7 +236,7 @@ def import_cinema(name):
         return False
     
 def check_import(package):
-    if package in sys.modules:
+    if type(package) == dict:
         return True  
     else:
         return False
@@ -233,6 +256,7 @@ def is_cinema_alias(var):
     for i in cinema_alias:
         if var in i:
             result = i[0]
+            break
         else:
             result = False
             
@@ -246,8 +270,13 @@ def multicinema(var):
             tmp = is_cinema_alias(c)
             if tmp:
                 result.append(tmp)
+        return result if len(result) != 0 else [var]
     
-    return result if len(result) != 0 else [var]
+    elif is_cinema_alias(var):
+        return [is_cinema_alias(var)]
+        
+    else:
+        return [var]
 
 def get_from_alias(name):
     result = False
@@ -255,7 +284,18 @@ def get_from_alias(name):
         if name in c:
             result = c[0]
     
-    return result        
+    return result    
+
+def cinema_in_dlist(cinema, dlist):
+    result = False
+    
+    if not dlist:
+        return result
+    else:
+        for d in dlist:
+            if cinema in d['alias']:
+                result = True
+                return result       
                 
 
 print('\n')
@@ -273,39 +313,60 @@ print('\n')
 l_cinema = []  
 
 while True:
+    var_cinema = None
+    var = dt.today()
+    selected_cinema = []
+    
     prompt = inputexit('prompt: ').lower()
-
+    print('')
+    
     if ' ' in prompt:
         var, var_cinema = prompt.split(' ', 1)
-        
-        l_cinema = multicinema(var_cinema)
-
-        for cinema in l_cinema:
-            cinema = get_from_alias(cinema)
-
-            if type(cinema) != dict:
-                l_cinema[l_cinema.index(cinema)] = import_cinema(cinema)
-
-            if cinema == False:
-                print('This cinema', var_cinema[l_cinema.index(cinema)], 'is unknown.')
+        var_cinema = multicinema(var_cinema)
+    
+    elif is_cinema_alias(prompt):
+        var_cinema = multicinema(prompt)
 
     else:
         var = prompt
-        l_cinema = import_all()
+    
+    if type(var_cinema) == list:
+        for cinema in var_cinema:
+            if not cinema_in_dlist(cinema, l_cinema):
+                l_cinema.append(import_cinema(cinema))
+            
+            for d_cinema in l_cinema:
+                if cinema == d_cinema['alias'][0]:
+                    selected_cinema.append(d_cinema)
+            
+    elif var_cinema == None:
+        if l_cinema:
+            for name in [c[0] for c in cinema_alias]:
+                if name not in [c['alias'][0] for c in l_cinema]:
+                    l_cinema.append(import_cinema(name))
+        else:
+            for name in [c[0] for c in cinema_alias]:
+                l_cinema.append(import_cinema(name))
+                
+        selected_cinema = l_cinema
+    
+    elif var_cinema not in l_daybuzz and not detect_date(var_cinema):
+        print('This cinema', var_cinema[l_cinema.index(cinema)], 'is unknown.')
+        continue
+            
 
+    l_cinema = [i for i in l_cinema if type(i) == dict]
+    
+    date = detect_date(var)
+    
 
-    l_cinema = [i for i in l_cinema if i]
+    if str(var).lower() in [l.lower() for l in l_today]:
+        show_date(dt.today(), selected_cinema)
 
+    elif str(var).lower() in [l.lower() for l in l_tomorrow]:
+        show_date(dt.today() + timedelta(days=1), selected_cinema)
 
-    if any(var in l for l in l_today):
-        print('')
-        show_date(dt.today(), l_cinema)
-
-    elif any(var in l for l in l_tomorrow):
-        print('')
-        show_date(dt.today() + timedelta(days=1), l_cinema)
-
-    elif any(var.lower() in l.lower() for l in l_dayname):
+    elif str(var).lower() in [l.lower() for l in l_dayname]:
         day_hit = l_dayname.index(var.capitalize())%7
         today = dt.today().strftime('')
 
@@ -316,7 +377,19 @@ while True:
         else:
             day_skip = day_hit - dt.today().weekday()
 
-        show_date(dt.today() + timedelta(days = day_skip), l_cinema)
+        show_date(dt.today() + timedelta(days = day_skip), selected_cinema)
 
-    elif detect_date(var):
-        show_date(dt.today(), l_cinema)
+    elif type(date) == dt:
+        show_date(date, selected_cinema)
+        
+    elif var_cinema != None:
+        for i in range(14):
+            show_date(dt.today() + timedelta(days = i), selected_cinema)
+
+    else:
+        for cinema in selected_cinema:
+            for event in cinema['event']:
+                if var == event['title']:
+                    show_date(date, selected_cinema)
+        
+    print('\n\n')
