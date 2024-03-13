@@ -44,7 +44,16 @@ print('')
 
 imported = []
 
-print('default is all, sort with arg [t]ime, [a]lphabet, [c]inema, [r]oom, [s]eat\n')
+description = 'default is all, sort with -- [t]ime, [a]lphabet, [c]inema, [r]oom, [s]eat\n'
+
+window_width = get_terminal_size((80, 20)).columns
+
+if len(description) > window_width:
+    for part in breakline_space(description, window_width):
+        print(part)
+else:
+    print(description)
+    
 
 def routine():
     sorter_key = None
