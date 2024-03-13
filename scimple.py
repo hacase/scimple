@@ -148,7 +148,8 @@ def routine():
     p_title = inputexit('\ntitle: ').lower().rstrip()
     if p_title == '':
         p_title = False
-
+        
+    print('')
     
     selected_cinema = [event for cinema in imported for selected in p_cinema if selected in cinema['alias'] for event in cinema['event']]
         
@@ -157,3 +158,4 @@ def routine():
 
 while True:
     routine()
+    print('\n\n\n\n')
