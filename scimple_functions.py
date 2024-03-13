@@ -50,6 +50,7 @@ def detect_date(date):
             else:
                 day = first
                 month = second
+                year = str(dt.today().year)
 
         elif date.count('.') == 2:
             first, second, third = date.split('.')
