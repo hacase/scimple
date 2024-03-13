@@ -256,11 +256,14 @@ def show_event(event_d):
     if event_d['room']:
         string += f", Saal: {event_d['room']}"
     
+    if event_d['seat']:
+        string += f", {event_d['seat']}"
+    
     print(string)
     
     comment = event_d['location']
     if event_d['spec']:
-        comment += ' ' + event_d['spec']
+        comment += '; ' + event_d['spec']
     
     if len(comment) > window_width:
         for part in breakline_space(comment, window_width):
