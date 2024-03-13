@@ -247,7 +247,7 @@ def show_event(event_d):
         
     event_colored = emoji.emojize(event_d['emoji']) +' '+ event_colored
         
-    if len(event_colored) +2> window_width:
+    if len(event_colored) > window_width:
         for part in breakline_space(event_colored, window_width):
             print(part)
     else:
