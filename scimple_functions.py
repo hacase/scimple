@@ -245,13 +245,13 @@ def show_event(event_d):
     else:
         event_colored = return_color(event_d['title'], '160')
         
-    event_colored = emoji.emojize(event_d['emoji']) +' '+ event_colored
+    event_colored = '@@' +' '+ event_colored
         
     if len(event_colored) > window_width:
         for part in breakline_space(event_colored, window_width):
-            print(part)
+            print(part.replace('@@', emoji.emojize(event_d['emoji']), 1))
     else:
-        print(event_colored)
+        print(event_colored.replace('@@', emoji.emojize(event_d['emoji']), 1))
         
     print('-'*window_width)
     
