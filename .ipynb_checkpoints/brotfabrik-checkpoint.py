@@ -9,7 +9,7 @@ def brotfabrik():
         "event": []}
 
     url = "https://www.bonnerkinemathek.de/programm/"
-    page = urlopen(url)
+    page = urlopen(url, )
     html = page.read().decode("utf-8")
 
     pattern = r'<h2>.*?</a></div>'
@@ -31,6 +31,7 @@ def brotfabrik():
                 ticket = re.sub("<.*?>", "", soup.find_all("a", class_="movie block-1", href=True)[i]['href'])
                 room = None
                 runtime = None
+                seat = None
                 
                 page = {
                     "name": 'Brotfabrik',
@@ -39,6 +40,7 @@ def brotfabrik():
                     "timestamp": timestamp,
                     "title": title,
                     "room": room,
+                    "seat": seat,
                     "runtime": runtime,
                     "spec": spec,
                     "location": location,

@@ -22,6 +22,7 @@ def rex():
         timestamp = dt.strptime(jtime, '%Y-%m-%d-%H:%M')
         title = show['name']
         room = None
+        seat = None
         location = 'REX'
         runtime = show['duration']
 
@@ -45,6 +46,7 @@ def rex():
             "timestamp": timestamp,
             "title": title,
             "room": room,
+            "seat": seat,
             "runtime": runtime,
             "spec": spec,
             "location": location,

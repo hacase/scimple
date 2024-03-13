@@ -95,6 +95,7 @@ def woki():
                     runtime = jruntime
                     ticket = unquote(unquote(screen[i]['link_mobile']))
                     location = 'WOKI'
+                    seat = None
 
                     page = {
                         "name": 'WOKI',
@@ -103,6 +104,7 @@ def woki():
                         "timestamp": timestamp,
                         "title": title,
                         "room": room,
+                        "seat": seat,
                         "runtime": runtime,
                         "spec": spec,
                         "location": location,
