@@ -21,7 +21,7 @@ exclude = ['termine', 'vorstellungen_fakten', 'idf', 'filmreihe_id', 'plakat_ids
            'Arthouse', 'Bier', 'Biography', 'History', 'Mystery', 'Musik',
            'Animation', 'Drama', 'ScienceFiction', 'Krieg', 'Headphones', 'StarTrek', 
            'Disney', 'Pixar', 'DC_Comics', 'Oscar', 'Doku',
-           'titel', '2D']
+           'titel', '2D', 'klon_von']
 
 def woki():
     result = {
