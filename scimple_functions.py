@@ -245,7 +245,12 @@ def show_event(event_d):
     else:
         event_colored = return_color(event_d['title'], '160')
         
-    print(emoji.emojize(event_d['emoji']), event_colored)
+    if len(event_colored) > window_width:
+        for part in breakline_space(emoji.emojize(event_d['emoji']) +' '+ comment, event_colored):
+            print(part)
+    else:
+        print(emoji.emojize(event_d['emoji']) +' '+ event_colored)
+        
     print('-'*window_width)
     
     if event_d['runtime']:
