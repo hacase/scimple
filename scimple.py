@@ -38,6 +38,7 @@ def inputexit(var):
 
 print(emoji.emojize(":T-Rex:"), 'Rex', emoji.emojize(":T-Rex:"))
 print(emoji.emojize(":popcorn:"), 'WOKI', emoji.emojize(":popcorn:"))
+print(emoji.emojize(":burrito:"), 'KINOPOLIS', emoji.emojize(":burrito:"))
 print(emoji.emojize(":bread:"), 'Brotfabrik', emoji.emojize(":bread:"))
 print(emoji.emojize(":NEW_button:"), 'Neue Filmbühne', emoji.emojize(":NEW_button:"))
 print('')

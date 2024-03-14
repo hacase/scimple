@@ -26,11 +26,11 @@ exclude = ['termine', 'vorstellungen_fakten', 'idf', 'filmreihe_id', 'plakat_ids
 def woki():
     result = {
         "alias": ['woki', 'wk'],
-        "event": []}
+        "event": []
+    }
 
     url = "https://www.woki.de/programm"
-    page = urlopen(url)
-    html = page.read().decode("utf-8")
+    html = urlopen(url).read().decode("utf-8")
 
     pattern = r'<script> var programm .*?</script>'
     match_results = re.findall(pattern, html, re.DOTALL)
@@ -94,8 +94,7 @@ def woki():
                     room = screen[i]['saal']
                     runtime = jruntime
                     ticket = unquote(unquote(screen[i]['link_mobile']))
-                    location = 'WOKI'
-                    seat = None
+                
 
                     page = {
                         "name": 'WOKI',
@@ -103,12 +102,15 @@ def woki():
                         "emoji": ':popcorn:',
                         "timestamp": timestamp,
                         "title": title,
+                        "subtitle": None,
                         "room": room,
-                        "seat": seat,
+                        "seat": None,
                         "runtime": runtime,
                         "spec": spec,
-                        "location": location,
-                        "ticket": ticket
+                        "location": 'WOKI',
+                        "ticket": ticket,
+                        "load": None,
+                        "price": None
                     }
 
                     result['event'].append(page)

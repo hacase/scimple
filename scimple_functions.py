@@ -6,14 +6,20 @@ from datetime import timedelta
 from itertools import cycle
 from shutil import get_terminal_size
 from threading import Thread
+from pyparsing import *
 
 
 woki_alias = ['woki', 'wk']
 brot_alias = ['brotfabrik', 'bf', 'brot']
 rex_alias = ['rex', 'rx']
 filmbuehne_alias = ['filmbuehne', 'fb', 'neue filmbuehne', 'filmbühne', 'neue filmbühne']
+kinopolis_alias = ['kinopolis', 'kp']
 
-cinema_alias = [woki_alias, brot_alias, rex_alias, filmbuehne_alias]
+cinema_alias = [woki_alias,
+                brot_alias,
+                rex_alias,
+                filmbuehne_alias,
+                kinopolis_alias]
 
 l_today = ['t', 'today', 'h', 'heute']
 l_tomorrow = ['tomorrow', 'm', 'morgen']
@@ -114,20 +120,24 @@ def is_cinema_alias(var):
 
 def import_cinema(name):
     if name in woki_alias:
-        import woki as wk
-        return wk.woki()
+        import woki
+        return woki.woki()
     
     elif name in brot_alias:
-        import brotfabrik as bf
-        return bf.brotfabrik()
+        import brotfabrik
+        return brotfabrik.brotfabrik()
     
     elif name in rex_alias:
-        import rex as rx
-        return rx.rex()
+        import rex
+        return rex.rex()
         
     elif name in filmbuehne_alias:
-        import filmbuehne as fb
-        return fb.filmbuehne()
+        import filmbuehne
+        return filmbuehne.filmbuehne()
+    
+    elif name in kinopolis_alias:
+        import kinopolis
+        return kinopolis.kinopolis()
         
     else:
         return False
@@ -193,6 +203,60 @@ def return_color(string, color):
     this = '\033[38;5;'+ color +'m' + string +'\033[0;0m'
     return this
 
+def color_len(line):
+    ESC = Literal('\033')
+    integer = Word(nums)
+    escapeSeq = Combine(ESC + '[' + Optional(delimitedList(integer,';')) + oneOf(list(alphas)))
+
+    nonAnsiString = lambda s : Suppress(escapeSeq).transformString(s)
+    
+    return len(nonAnsiString(line))
+
+def breakline_space_col(text, width):
+    firstinline = True
+    lines = []
+    l = ''
+    
+    for t in text.split(' '):
+        if color_len(t) > width:
+            firstinline = True
+            
+            if l:
+                initial = width - color_len(l) - 1
+                lines.append(l +' '+ t[:initial])
+            else:
+                initial = 0
+                            
+            for part in [t[initial +i:initial +i +width] for i in range(1, color_len(t)-initial, width)]:
+                lines.append(part)
+            
+            if color_len(lines[-1]) != width:
+                l = lines.pop()
+            else:
+                l = ''
+            
+        else:
+            if color_len(l) +1 +color_len(t) > width:
+                lines.append(l)
+                l = ''
+                firstinline = True
+
+            if firstinline:
+                if color_len(l + t) +1 >= width:
+                    lines.append(t)
+                    l = ''
+                    firstinline = True
+                else:
+                    l += t
+                    firstinline = False
+            else:
+                l += ' ' + t
+                
+    if l:
+        lines.append(l)
+        
+    return lines
+
 def breakline_space(text, width):
     firstinline = True
     lines = []
@@ -239,20 +303,31 @@ def breakline_space(text, width):
     return lines
         
 def show_event(event_d):
-    window_width = get_terminal_size((80, 20)).columns
+    window_width = 48#get_terminal_size((80, 20)).columns
+    
+    output_title = event_d['title']
+    
+    if event_d['subtitle']:
+        output_title += ' / '+ event_d['subtitle']
+        
+    output_title = '@@' +' '+ output_title
+    
+    broken_title = ''
+        
+    if len(output_title) > window_width:
+        for part in breakline_space(output_title, window_width):
+            broken_title += part.replace('@@', emoji.emojize(event_d['emoji']), 1) + '\n'
+    else:
+        broken_title = output_title.replace('@@', emoji.emojize(event_d['emoji']), 1) + '\n'
+        
+    broken_title = broken_title[:-1]
     
     if event_d['timestamp'] > dt.now():
-        event_colored = event_d['title']
+        event_colored = broken_title
     else:
-        event_colored = return_color(event_d['title'], '160')
+        event_colored = return_color(broken_title, '160')
         
-    event_colored = '@@' +' '+ event_colored
-        
-    if len(event_colored) > window_width:
-        for part in breakline_space(event_colored, window_width):
-            print(part.replace('@@', emoji.emojize(event_d['emoji']), 1))
-    else:
-        print(event_colored.replace('@@', emoji.emojize(event_d['emoji']), 1))
+    print(event_colored)
         
     print('-'*window_width)
     
@@ -265,21 +340,49 @@ def show_event(event_d):
         string += f", Saal: {event_d['room']}"
     
     if event_d['seat']:
-        string += f", {event_d['seat']}"
+        string += f", {event_d['seat']} seats"
+        
+    if event_d['load']:
+        string += f", {event_d['load']}"
     
-    print(string)
+    if len(string) > window_width:
+        for part in breakline_space(string, window_width):
+            print(part)
+    else:
+        print(string)
+
     
     comment = event_d['location']
+    
+    if event_d['price']:
+        comment += '; ' + event_d['price']
+        
+    l_highlight = ['ov', 'omu']
+    
     if event_d['spec']:
         comment += '; ' + event_d['spec']
     
-    if len(comment) > window_width:
-        for part in breakline_space(comment, window_width):
+    splitted = comment.split(' ')
+    for i in range(len(splitted)):
+        if splitted[i].lower() in l_highlight:
+            splitted[i] = return_color(splitted[i], '34')
+
+        elif splitted[i][:-1].lower() in l_highlight and not splitted[i][-1].isalpha():
+            splitted[i] = return_color(splitted[i][:-1], '34') + splitted[i][-1]
+
+    comment = ' '.join(splitted)
+        
+    
+    if color_len(comment) > window_width:
+        for part in breakline_space_col(comment, window_width):
             print(part)
     else:
         print(comment)
-            
-    print(return_color(event_d['ticket'], '39'))
+
+    if event_d['ticket']:
+        print(return_color(event_d['ticket'], '39'))
+    else:
+        print('--< no link >--')
     print('')
     
 def sorter(d, sorter_key=None):
@@ -334,13 +437,17 @@ def show(l_event, sorter_key, timestamp, title):
     flag = False
     
     for event in sorter(l_event, sorter_key):
+        full_title = event['title']
+        if event['subtitle']:
+            full_title += ' ' + event['subtitle']
+        
         if not (timestamp or title):
+            flag = True
+            show_event(event)    
+        
+        elif valid_date(event['timestamp'], timestamp) and valid_title(full_title, title):
             flag = True
             show_event(event)
 
-        elif valid_date(event['timestamp'], timestamp) and valid_title(event['title'], title):
-            flag = True
-            show_event(event)
-            
     if not flag:
         print('\n-< no hits >-\n')

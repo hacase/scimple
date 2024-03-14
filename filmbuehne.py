@@ -9,7 +9,8 @@ exclude = ['category', 'code']
 def filmbuehne():
     result = {
         "alias": ['filmbuehne', 'fb', 'neue filmbuehne', 'filmbühne', 'neue filmbühne'],
-        "event": []}
+        "event": []
+    }
 
     url = "https://www.kinoheld.de/ajax/getShowsForCinemas?cinemaIds%5B%5D=996&lang=de"
     page = urlopen(url)
@@ -21,9 +22,6 @@ def filmbuehne():
         jtime = show['date'] +'-'+ show['time']
         timestamp = dt.strptime(jtime, '%Y-%m-%d-%H:%M')
         title = show['name']
-        room = None
-        seat = None
-        location = 'Neue Filmbühne'
         runtime = show['duration']
 
         jspec = ''
@@ -45,12 +43,15 @@ def filmbuehne():
             "emoji": ':NEW_button:',
             "timestamp": timestamp,
             "title": title,
-            "room": room,
-            "seat": seat,
+            "subtitle": None,
+            "room": None,
+            "seat": None,
             "runtime": runtime,
             "spec": spec,
-            "location": location,
-            "ticket": ticket
+            "location": 'Neue Filmbühne',
+            "ticket": ticket,
+            "load": None,
+            "price": None
         }
         
         result['event'].append(page)

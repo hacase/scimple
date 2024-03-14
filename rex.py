@@ -21,9 +21,6 @@ def rex():
         jtime = show['date'] +'-'+ show['time']
         timestamp = dt.strptime(jtime, '%Y-%m-%d-%H:%M')
         title = show['name']
-        room = None
-        seat = None
-        location = 'REX'
         runtime = show['duration']
 
         jspec = ''
@@ -45,12 +42,15 @@ def rex():
             "emoji": ':T-Rex:',
             "timestamp": timestamp,
             "title": title,
-            "room": room,
-            "seat": seat,
+            "subtitle": None,
+            "room": None,
+            "seat": None,
             "runtime": runtime,
             "spec": spec,
-            "location": location,
-            "ticket": ticket
+            "location": 'REX',
+            "ticket": ticket,
+            "load": None,
+            "price": None
         }
         
         result['event'].append(page)

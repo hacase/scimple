@@ -6,7 +6,8 @@ from datetime import datetime as dt
 def brotfabrik():
     result = {
         "alias": ['brotfabrik', 'bf', 'brot'],
-        "event": []}
+        "event": []
+    }
 
     url = "https://www.bonnerkinemathek.de/programm/"
     page = urlopen(url, )
@@ -29,9 +30,6 @@ def brotfabrik():
                 spec = re.sub("<.*?>", "", soup.find_all("span", class_="spec")[i].text).replace('\n', ' ')
                 location = re.sub("<.*?>", "", soup.find_all("div", class_="location")[i].text)
                 ticket = re.sub("<.*?>", "", soup.find_all("a", class_="movie block-1", href=True)[i]['href'])
-                room = None
-                runtime = None
-                seat = None
                 
                 page = {
                     "name": 'Brotfabrik',
@@ -39,12 +37,15 @@ def brotfabrik():
                     "emoji": ':bread:',
                     "timestamp": timestamp,
                     "title": title,
-                    "room": room,
-                    "seat": seat,
-                    "runtime": runtime,
+                    "subtitle": None,
+                    "room": None,
+                    "seat": None,
+                    "runtime": None,
                     "spec": spec,
                     "location": location,
-                    "ticket": ticket
+                    "ticket": ticket,
+                    "load": None,
+                    "price": None
                 }
 
                 result['event'].append(page)
