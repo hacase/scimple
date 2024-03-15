@@ -7,6 +7,7 @@ from itertools import cycle
 from shutil import get_terminal_size
 from threading import Thread
 from pyparsing import *
+import re
 
 
 woki_alias = ['woki', 'wk']
