@@ -15,11 +15,11 @@ rex_alias = ['rex', 'rx']
 filmbuehne_alias = ['filmbuehne', 'fb', 'neue filmbuehne', 'filmbühne', 'neue filmbühne']
 kinopolis_alias = ['kinopolis', 'kp']
 
-cinema_alias = [woki_alias,
+cinema_alias = [rex_alias,
+                woki_alias,
+                kinopolis_alias,
                 brot_alias,
-                rex_alias,
-                filmbuehne_alias,
-                kinopolis_alias]
+                filmbuehne_alias]
 
 l_today = ['t', 'today', 'h', 'heute']
 l_tomorrow = ['tomorrow', 'm', 'morgen']
@@ -356,19 +356,21 @@ def show_event(event_d):
     
     if event_d['price']:
         comment += '; ' + event_d['price']
-        
-    l_highlight = ['ov', 'omu']
     
     if event_d['spec']:
         comment += '; ' + event_d['spec']
+        
+    l_highlight = ['ov', 'omu', 'omitu']
     
     splitted = comment.split(' ')
-    for i in range(len(splitted)):
+    for i in range(len(splitted)):      
+        inside_word = re.sub(r'[^A-Za-z]+', '', splitted[i])
+        
         if splitted[i].lower() in l_highlight:
             splitted[i] = return_color(splitted[i], '34')
 
-        elif splitted[i][:-1].lower() in l_highlight and not splitted[i][-1].isalpha():
-            splitted[i] = return_color(splitted[i][:-1], '34') + splitted[i][-1]
+        elif inside_word.lower() in l_highlight:
+            splitted[i] = splitted[i].replace(inside_word, return_color(inside_word, '34'))
 
     comment = ' '.join(splitted)
         
