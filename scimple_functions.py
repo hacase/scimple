@@ -411,7 +411,7 @@ def sorter(d, sorter_key=None):
     except TypeError:
         d = sorted(d, key=lambda l: l['timestamp'])
     
-    return d
+    return reversed(d)
 
 def valid_date(event, timestamp):
     result = False
