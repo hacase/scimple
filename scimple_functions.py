@@ -31,6 +31,8 @@ l_dayname = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday',
 
 l_daybuzz = l_today + l_tomorrow + l_dayname
 
+l_highlight = ['ov', 'omu', 'omitu', 'omdu']
+
         
 def detect_date(date):
     if type(date) == type(dt.now()):
@@ -360,8 +362,6 @@ def show_event(event_d):
     
     if event_d['spec']:
         comment += '; ' + event_d['spec']
-        
-    l_highlight = ['ov', 'omu', 'omitu']
     
     splitted = comment.split(' ')
     for i in range(len(splitted)):      
