@@ -25,7 +25,7 @@ def sternlichtspiele():
             attributes = j['attributes']
             
             if subtitle:
-                spec = subtitle +','+ ', '.join(attributes)
+                spec = subtitle +', '+ ', '.join(attributes)
             else:
                 spec = ', '.join(attributes)
             
