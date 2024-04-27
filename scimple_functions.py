@@ -8,6 +8,7 @@ from shutil import get_terminal_size
 from threading import Thread
 from pyparsing import *
 import re
+from urllib.request import urlopen
 
 
 woki_alias = ['woki', 'wk']
@@ -15,12 +16,14 @@ brot_alias = ['brotfabrik', 'bf', 'brot']
 rex_alias = ['rex', 'rx']
 filmbuehne_alias = ['filmbuehne', 'fb', 'neue filmbuehne', 'filmbühne', 'neue filmbühne']
 kinopolis_alias = ['kinopolis', 'kp']
+stern_alias = ['sternlichtspiele', 'sl', 'stern', 'sternkino']
 
 cinema_alias = [rex_alias,
                 woki_alias,
                 kinopolis_alias,
                 brot_alias,
-                filmbuehne_alias]
+                filmbuehne_alias,
+                stern_alias]
 
 l_today = ['t', 'today', 'h', 'heute']
 l_tomorrow = ['tomorrow', 'm', 'morgen']
@@ -33,6 +36,34 @@ l_daybuzz = l_today + l_tomorrow + l_dayname
 
 l_highlight = ['ov', 'omu', 'omitu', 'omdu']
 
+
+def import_cinema(name):
+    if name in woki_alias:
+        import woki
+        return woki.woki()
+    
+    elif name in brot_alias:
+        import brotfabrik
+        return brotfabrik.brotfabrik()
+    
+    elif name in rex_alias:
+        import rex
+        return rex.rex()
+    
+    elif name in filmbuehne_alias:
+        import filmbuehne
+        return filmbuehne.filmbuehne()
+    
+    elif name in kinopolis_alias:
+        import kinopolis
+        return kinopolis.kinopolis()
+    
+    elif name in stern_alias:
+        import sternlichtspiele
+        return sternlichtspiele.sternlichtspiele()
+    
+    else:
+        return False
         
 def detect_date(date):
     if type(date) == type(dt.now()):
@@ -120,30 +151,6 @@ def is_cinema_alias(var):
             result = False
             
     return result
-
-def import_cinema(name):
-    if name in woki_alias:
-        import woki
-        return woki.woki()
-    
-    elif name in brot_alias:
-        import brotfabrik
-        return brotfabrik.brotfabrik()
-    
-    elif name in rex_alias:
-        import rex
-        return rex.rex()
-        
-    elif name in filmbuehne_alias:
-        import filmbuehne
-        return filmbuehne.filmbuehne()
-    
-    elif name in kinopolis_alias:
-        import kinopolis
-        return kinopolis.kinopolis()
-        
-    else:
-        return False
     
 def import_cinema_errorless(name):
     while True:
@@ -154,6 +161,19 @@ def import_cinema_errorless(name):
             print("\r" , end="", flush=True)
             
             print(e)
+            time.sleep(4)
+        else:
+            return result
+        
+def open_url_errorless(url, week=None):
+    while True:
+        try:
+            result = urlopen(url)
+
+        except Exception as e:
+            print("\r" , end="", flush=True)
+            
+            print(e, 'with week', week)
             time.sleep(4)
         else:
             return result
@@ -306,7 +326,7 @@ def breakline_space(text, width):
     return lines
         
 def show_event(event_d):
-    window_width = 48#get_terminal_size((80, 20)).columns
+    window_width = get_terminal_size((80, 20)).columns
     
     output_title = event_d['title']
     

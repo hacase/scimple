@@ -5,6 +5,7 @@ import json
 from datetime import datetime as dt
 from datetime import timedelta
 from bs4 import BeautifulSoup
+import scimple_functions as SF
 
 def None_AttributeError_cnt(function):
     try:
@@ -12,14 +13,10 @@ def None_AttributeError_cnt(function):
     except:
         return None
 
-def kinopolis():
-    result = {
-    "alias": ['kinopolis', 'kp'],
-    "event": []
-    }
-
-    url = "https://www.kinopolis.de/bn/programm"
-    html = urlopen(url).read().decode("utf-8")
+def kinopolis_week(url, url_week):
+    result_event = []
+    
+    html = SF.open_url_errorless(url, url_week).read().decode("utf-8")
     
     soup = BeautifulSoup(html, "html.parser")
     match_results = soup.find_all("section", {"class": "bg-2 movie mb-2"})
@@ -168,6 +165,25 @@ def kinopolis():
                     "price": price
                 }
 
-                result['event'].append(page)
+                result_event.append(page)
                 
+    return result_event
+
+def kinopolis():
+    result = {
+        "alias": ['kinopolis', 'kp'],
+        "event": []
+    }
+    
+    raw_url = "https://www.kinopolis.de/bn/programm"
+    
+    for week in range(8):
+        if week > 0:
+            url = raw_url + '/woche-' + str(week)
+        else:
+            url = raw_url
+
+        for event in kinopolis_week(url, week):
+            result['event'].append(event)
+        
     return result

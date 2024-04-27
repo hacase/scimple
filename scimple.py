@@ -41,6 +41,7 @@ print(emoji.emojize(":popcorn:"), 'WOKI', emoji.emojize(":popcorn:"))
 print(emoji.emojize(":burrito:"), 'KINOPOLIS', emoji.emojize(":burrito:"))
 print(emoji.emojize(":bread:"), 'Brotfabrik', emoji.emojize(":bread:"))
 print(emoji.emojize(":NEW_button:"), 'Neue Filmbühne', emoji.emojize(":NEW_button:"))
+print(emoji.emojize(":glowing_star:"), 'STERNLICHTSPIELE', emoji.emojize(":glowing_star:"))
 print('')
 
 imported = []
