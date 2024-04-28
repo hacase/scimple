@@ -17,13 +17,15 @@ rex_alias = ['rex', 'rx']
 filmbuehne_alias = ['filmbuehne', 'fb', 'neue filmbuehne', 'filmbühne', 'neue filmbühne']
 kinopolis_alias = ['kinopolis', 'kp']
 stern_alias = ['sternlichtspiele', 'sl', 'stern', 'sternkino']
+capitol_siegburg_alias = ['Capitol Kinocenter', 'cs', 'capitol', 'capitol siegburg']
 
 cinema_alias = [rex_alias,
                 woki_alias,
                 kinopolis_alias,
                 brot_alias,
                 filmbuehne_alias,
-                stern_alias]
+                stern_alias,
+                capitol_siegburg_alias]
 
 l_today = ['t', 'today', 'h', 'heute']
 l_tomorrow = ['tomorrow', 'm', 'morgen']
@@ -61,6 +63,10 @@ def import_cinema(name):
     elif name in stern_alias:
         import sternlichtspiele
         return sternlichtspiele.sternlichtspiele()
+
+    elif name in capitol_siegburg_alias:
+        import capitol_siegburg
+        return capitol_siegburg.capitol_siegburg()
     
     else:
         return False
