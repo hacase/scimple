@@ -177,11 +177,8 @@ def kinopolis():
     
     raw_url = "https://www.kinopolis.de/bn/programm"
     
-    for week in range(8):
-        if week > 0:
-            url = raw_url + '/woche-' + str(week)
-        else:
-            url = raw_url
+    for week in range(1, 8):
+        url = raw_url + '/woche-' + str(week)
 
         for event in kinopolis_week(url, week):
             result['event'].append(event)
