@@ -5,6 +5,9 @@ from datetime import timedelta
 from shutil import get_terminal_size
 import scimple_functions as SF
 
+
+WINDOW_WIDTH = get_terminal_size((80, 20)).columns
+
 def slow_type(t):
     typing_speed = 375
     for l in t:
@@ -35,6 +38,15 @@ def inputexit(var):
     else:
         return var
 
+def  print_description():
+    description = 'default is all, sort with -- [t]ime, [a]lphabet, [c]inema, [r]oom, [s]eat\n'
+
+    if len(description) > WINDOW_WIDTH:
+        for part in SF.breakline_space(description, WINDOW_WIDTH):
+            print(part)
+    else:
+        print(description)
+
 
 print(emoji.emojize(":T-Rex:"), 'Rex', emoji.emojize(":T-Rex:"))
 print(emoji.emojize(":popcorn:"), 'WOKI', emoji.emojize(":popcorn:"))
@@ -47,15 +59,6 @@ print('')
 
 imported = []
 
-description = 'default is all, sort with -- [t]ime, [a]lphabet, [c]inema, [r]oom, [s]eat\n'
-
-window_width = get_terminal_size((80, 20)).columns
-
-if len(description) > window_width:
-    for part in SF.breakline_space(description, window_width):
-        print(part)
-else:
-    print(description)
     
 
 def routine():
