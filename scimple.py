@@ -62,6 +62,8 @@ imported = []
     
 
 def routine():
+    print_description()
+    
     sorter_key = None
     
     while True:
