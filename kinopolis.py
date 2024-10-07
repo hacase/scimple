@@ -4,11 +4,8 @@ import re
 import json
 from datetime import datetime as dt
 from datetime import timedelta
-import locale
 from bs4 import BeautifulSoup
 import scimple_functions as SF
-
-locale.setlocale(locale.LC_TIME, 'de_DE.UTF-8')
 
 def None_AttributeError_cnt(function):
     try:
