@@ -432,7 +432,6 @@ def sorter(d, sorter_key=None):
             d = sorted(d, key=lambda l: l['name'])
             
         else:
-            print(d)
             print(d['timestamp'])
             d = sorted(d, key=lambda l: l['timestamp'])
             
