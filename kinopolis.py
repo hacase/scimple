@@ -137,7 +137,7 @@ def kinopolis_week(url, url_week):
                     if all(i in tmp for i in ['OV', 'OMU']):
                         tmp.remove('OV')
 
-                    spec = []                
+                    spec = []
                     [spec.append(i) for i in tmp if i not in all_spec + spec]
 
                     for caption in spec_caption:
@@ -147,9 +147,13 @@ def kinopolis_week(url, url_week):
                         elif any(caption[0].lower() == t.lower() for t in spec):
                             spec = [caption[0] +': '+ caption[1] if s.lower() == caption[0].lower() else s for s in spec]
 
-                    spec = ', '.join(all_spec + spec)
+                    description = all_spec + spec
                 except:
-                    spec = ', '.join(all_spec)
+                    description = all_spec
+
+                des_res = []
+                [des_res.append(x) for x in description if x not in des_res]
+                spec_res = ', '.join(des_res)
 
                 try:
                     ticket = 'https://www.kinopolis.de' + screen.find("a", {"data-version": True, "href": True})['href']
@@ -171,7 +175,7 @@ def kinopolis_week(url, url_week):
                     "room": room,
                     "seat": seat,
                     "runtime": runtime,
-                    "spec": spec,
+                    "spec": spec_res,
                     "location": 'KINOPOLIS',
                     "ticket": ticket,
                     "load": load,
