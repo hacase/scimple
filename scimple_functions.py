@@ -17,7 +17,7 @@ rex_alias = ['rex', 'rx']
 filmbuehne_alias = ['filmbuehne', 'fb', 'neue filmbuehne', 'filmbühne', 'neue filmbühne']
 kinopolis_alias = ['kinopolis', 'kp']
 stern_alias = ['sternlichtspiele', 'sl', 'stern', 'sternkino']
-capitol_siegburg_alias = ['Capitol Kinocenter', 'cs', 'capitol', 'capitol siegburg']
+capitol_siegburg_alias = ['capitol kinocenter', 'cs', 'capitol', 'capitol siegburg']
 
 cinema_alias = [rex_alias,
                 woki_alias,
@@ -432,6 +432,8 @@ def sorter(d, sorter_key=None):
             d = sorted(d, key=lambda l: l['name'])
             
         else:
+            print(d)
+            print(d['timestamp'])
             d = sorted(d, key=lambda l: l['timestamp'])
             
     except TypeError:

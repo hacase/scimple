@@ -3,6 +3,7 @@ import re
 import json
 from datetime import datetime as dt
 
+alias = ['Capitol Kinocenter', 'cs', 'capitol', 'capitol siegburg']
 
 def capitol_siegburg():
     result = {

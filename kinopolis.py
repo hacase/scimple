@@ -4,8 +4,11 @@ import re
 import json
 from datetime import datetime as dt
 from datetime import timedelta
+import locale
 from bs4 import BeautifulSoup
 import scimple_functions as SF
+
+locale.setlocale(locale.LC_TIME, 'de_DE.UTF-8')
 
 def None_AttributeError_cnt(function):
     try:
@@ -70,25 +73,29 @@ def kinopolis_week(url, url_week):
 
         table = program.find_all("div", {"class": "slider slider-6 prog-nav"})
         pattern = r'data-performance-ids=".*?</div></div></div>'
-        for slider in re.findall(pattern, str(table)):        
+        for slider in re.findall(pattern, str(table)):
             day = re.search('<div class="prog-nav__day">(.*?)</div>', slider).group(1)
 
             if 'Heute' in day:
                 if dt.today().hour <= 1:
-                    day = dt.today() + timedelta(-1)
+                    day_date = dt.today() + timedelta(-1)
                 else:
-                    day = dt.today()
+                    day_date = dt.today()
 
             elif 'Morgen' in day:
                 if dt.today().hour <= 1:
-                    day = dt.today()
+                    day_date = dt.today()
                 else:
-                    day = dt.today() + timedelta(+1)
+                    day_date = dt.today() + timedelta(+1)
 
             else:
-                day = dt.strptime(day.split(' ')[-1], '%d.%m.')
+                day, month = day.split(' ')[-1].split('.')[:2]
+                year = dt.now().year
+                if int(month) < dt.now().month:
+                    year += 1
+                day_date = dt.strptime(day+'.'+month+'.'+str(year), '%d.%m.%Y')
 
-            l_day.append(day.replace(year=dt.today().year, second=0, microsecond=0))
+            l_day.append(day_date.replace(second=0, microsecond=0))
 
 
         i = -1
@@ -97,7 +104,13 @@ def kinopolis_week(url, url_week):
             day = l_day[i]
 
             for screen in day_slide.find_all("div", {"class": "prog2__cont", "data-performance-id": True}):            
-                time = None_AttributeError_cnt(screen.find("div", {"class": "prog2__time"}))
+                time_expired = None_AttributeError_cnt(screen.find("div", {"class": "prog2__time"}))
+                time_alive = None_AttributeError_cnt(screen.find("a", {"class": "prog2__time time__buy_btn"}))
+                if time_expired:
+                    time = time_expired
+                else:
+                    time = time_alive
+
                 if time:
                     hour, minute = time.split(':', 1)
                     timestamp = day.replace(hour=int(hour), minute=int(minute))
