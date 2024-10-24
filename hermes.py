@@ -53,7 +53,7 @@ while True:
 
     for i_ride, ride in enumerate(sorter(data)):
         desti = ride['destination']
-        if any(bonn in ride['destination'] for bonn in ['Bonn', 'Honnef', 'Hauptbahnhof']):
+        if any(bonn in ride['destination'] for bonn in ['Bonn', 'Honnef', 'Hauptbahnhof', 'Ramersdorf']):
             destination_color = greening(desti)
         else:
             destination_color = desti
