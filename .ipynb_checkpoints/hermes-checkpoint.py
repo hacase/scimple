@@ -8,7 +8,7 @@ import json
 
 
 def sorter(l):
-    return sorted(l, key=lambda x: x['real'])
+    return reversed(sorted(l, key=lambda x: x['real']))
 
 def greening(string):
     this = '\033[38;5;34m' +string+ '\033[0;0m'
