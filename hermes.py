@@ -75,5 +75,9 @@ while True:
         print(string + f' => ETA: {round(arrival.total_seconds() / 60., 2)}min\n')
 
 
-    print('\n' + '='*WINDOW_WIDTH  + '\n')
-    time.sleep(30)
+    refresh_time = 10
+    time_per_char = refresh_time / WINDOW_WIDTH
+
+    for i in range(WINDOW_WIDTH):
+        print("*" * i, end='\r')
+        time.sleep(time_per_char)

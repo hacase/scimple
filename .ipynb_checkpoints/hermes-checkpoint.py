@@ -4,7 +4,7 @@ from datetime import timedelta
 import re
 from urllib.request import urlopen
 import json
-
+from shutil import get_terminal_size
 
 
 def sorter(l):
@@ -14,6 +14,8 @@ def greening(string):
     this = '\033[38;5;34m' +string+ '\033[0;0m'
     return this
 
+
+WINDOW_WIDTH = get_terminal_size((80, 20)).columns
 
 URL_BASE = "https://swb-mobil.de/api/v1/stationboards/ass/"
 
@@ -51,7 +53,7 @@ while True:
 
     for i_ride, ride in enumerate(sorter(data)):
         desti = ride['destination']
-        if any(bonn in ride['destination'] for bonn in ['Bonn', 'Honnef']):
+        if any(bonn in ride['destination'] for bonn in ['Bonn', 'Honnef', 'Hauptbahnhof', 'Ramersdorf']):
             destination_color = greening(desti)
         else:
             destination_color = desti
@@ -72,4 +74,10 @@ while True:
         arrival = timedelta(seconds=(ride['real'] - int(dt.now().timestamp()) - OFFSET) % seconds_day)
         print(string + f' => ETA: {round(arrival.total_seconds() / 60., 2)}min\n')
 
-    time.sleep(120)
+
+    refresh_time = 10
+    time_per_char = refresh_time / WINDOW_WIDTH
+
+    for i in range(WINDOW_WIDTH):
+        print("*" * i, end='\r')
+        time.sleep(time_per_char)
